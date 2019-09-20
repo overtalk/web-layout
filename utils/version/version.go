@@ -16,9 +16,9 @@ type Info struct {
 func (i *Info) Version() string {
 	parts := []string{i.Name, i.Tag, i.Branch, i.Commit}
 
-	for _, v := range parts {
+	for k, v := range parts {
 		if len(v) == 0 {
-			v = "unknown"
+			parts[k] = "unknown"
 		}
 	}
 
