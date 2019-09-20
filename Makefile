@@ -4,7 +4,7 @@ COMMIT := $(shell git rev-parse --short HEAD)
 
 LDFLAGS := $(LDFLAGS) -s -w -X main.commit=$(COMMIT) -X main.branch=$(BRANCH) -X main.tag=$(TAG)
 
-.PHONY: gen-model
+.PHONY: mysql-model
 gen-model:
 	cd ./tools/generate-mysql-model/ && \
 	sh ./gen-model.sh
