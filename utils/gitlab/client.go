@@ -6,10 +6,11 @@ import (
 )
 
 type Config struct {
-	Token string `env:"GITLAB_TOKEN"`
+	Token string `env:"GITLAB_TOKEN,required"`
 	Ref   string `env:"GITLAB_REF" envDefault:"master"`
-	Pid   int    `env:"GITLAB_PID"`
+	Pid   int    `env:"GITLAB_PID,required"`
 	Url   string `env:"GITLAB_URL"`
+	Path  string `env:"GITLAB_PATH,required"`
 }
 
 type Client struct {
