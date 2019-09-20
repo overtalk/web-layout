@@ -5,12 +5,12 @@ import (
 
 	"github.com/caarlos0/env"
 
-	. "web-layout/utils/gitlab"
+	"web-layout/utils/gitlab"
 )
 
 // Fetch gets all config items from gitlab repo
 func Fetch(c interface{}) error {
-	gitlabConfig := Config{}
+	gitlabConfig := gitlab.Config{}
 	if err := env.Parse(&gitlabConfig); err != nil {
 		return err
 	}
