@@ -17,7 +17,7 @@ func TestConnect(t *testing.T) {
 	os.Setenv("REDIS_POOL_SIZE", "100")
 	os.Setenv("REDIS_DB", "1")
 
-	c := Cfg{}
+	c := Config{}
 	if err := env.Parse(&c); err != nil {
 		t.Error(err)
 		return
@@ -44,7 +44,7 @@ func TestRedis_Hash(t *testing.T) {
 	os.Setenv("REDIS_POOL_SIZE", "100")
 	os.Setenv("REDIS_DB", "1")
 
-	c := Cfg{}
+	c := Config{}
 	if err := env.Parse(&c); err != nil {
 		t.Error(err)
 		return
@@ -95,7 +95,7 @@ func TestRedis_Sorted_Sets(t *testing.T) {
 	os.Setenv("REDIS_POOL_SIZE", "100")
 	os.Setenv("REDIS_DB", "1")
 
-	c := Cfg{}
+	c := Config{}
 	if err := env.Parse(&c); err != nil {
 		t.Error(err)
 		return
@@ -147,7 +147,7 @@ func TestRedis_Lists(t *testing.T) {
 	os.Setenv("REDIS_POOL_SIZE", "100")
 	os.Setenv("REDIS_DB", "1")
 
-	c := Cfg{}
+	c := Config{}
 	if err := env.Parse(&c); err != nil {
 		t.Error(err)
 		return
