@@ -8,26 +8,25 @@ import (
 	consulWatch "github.com/hashicorp/consul/api/watch"
 )
 
-// ConsulClient : 注册器
-type Registrar struct {
-	// consul 地址
-	consulAddr string // consul地址（127.0.0.1:8500）
+// Client defines the consul client
+type Client struct {
+	consulAddr string // consul address（127.0.0.1:8500）
 
-	// 服务注册相关
-	srConfig     *SRConfig
+	// service registration related
+	srConfig     *RegistryConfig
 	checkPort    int // 服务注册 check 的端口
 	checkServer  *http.Server
-	consulClient *consulAPI.Client // consul client
+	consulClient *consulAPI.Client // consul Client
 
-	// 服务发现相关
-	sdConfigs []*SDConfig
+	// service discovery related
+	sdConfigs []*DiscoveryConfig
 	watchChan chan AvailableServers
 }
 
-// NewRegistrar ： 构造函数
-func NewRegistrar(checkPort int, srConfig *SRConfig, consulAddr string, sdConfigs ...*SDConfig) (*Registrar, error) {
+// NewClient is the constructor of consul Client
+func NewClient(checkPort int, srConfig *RegistryConfig, consulAddr string, sdConfigs ...*DiscoveryConfig) (*Client, error) {
 	// service registry
-	client, err := consulAPI.NewClient(&consulAPI.Config{Address: consulAddr})
+	c, err := consulAPI.NewClient(&consulAPI.Config{Address: consulAddr})
 	if err != nil {
 		return nil, err
 	}
@@ -48,12 +47,12 @@ func NewRegistrar(checkPort int, srConfig *SRConfig, consulAddr string, sdConfig
 		}
 		plan.Handler = sdConfig.handler
 
-		// 绑定 plan 到 SDConfig 上
+		// bind plan to DiscoveryConfig
 		sdConfig.watchChan = watchChan
 		sdConfig.plan = plan
 	}
 
-	// 构建 check sever
+	// construct check sever
 	mux := http.NewServeMux()
 	mux.HandleFunc("/check", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("ok"))
@@ -64,13 +63,13 @@ func NewRegistrar(checkPort int, srConfig *SRConfig, consulAddr string, sdConfig
 		Handler: mux,
 	}
 
-	return &Registrar{
+	return &Client{
 		checkPort:    checkPort,
 		checkServer:  checkServer,
 		consulAddr:   consulAddr,
 		srConfig:     srConfig,
 		sdConfigs:    sdConfigs,
-		consulClient: client,
+		consulClient: c,
 		watchChan:    watchChan,
 	}, nil
 }
