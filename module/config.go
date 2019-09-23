@@ -10,3 +10,11 @@ type Config struct {
 	Mysql *mysql.Config
 	Redis *redis.Config
 }
+
+// DataStorage defines  all data source of the project
+type DataStorage struct {
+	Redis  Redis
+	Memory Memory
+	MySQL  MySQL
+	Mongo  Mongo
+}
