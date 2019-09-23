@@ -3,10 +3,12 @@ package gate
 import (
 	"github.com/gin-gonic/gin"
 
+	"web-layout/utils/consul"
 	"web-layout/utils/gin/gate"
 )
 
 type Gate struct {
+	consulClient *consul.Client
 	*gate.Gate
 }
 
