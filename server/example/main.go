@@ -4,8 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
+	"web-layout/gate"
+	"web-layout/service/demo"
 	"web-layout/utils/version"
 )
 
@@ -15,10 +19,6 @@ var (
 	commit string
 	branch string
 )
-
-func pingHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Pong!\n")
-}
 
 func main() {
 	var v bool
@@ -35,6 +35,19 @@ func main() {
 		fmt.Println(git.Version())
 		return
 	}
-	http.HandleFunc("/ping", pingHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+
+	g := gate.NewGate(9999)
+	demo.Registry(g)
+
+	g.Start()
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-sigChan
+		log.Println("Shutting down gate server...")
+		g.Shutdown()
+	}()
+
+	g.Shutdown()
 }
