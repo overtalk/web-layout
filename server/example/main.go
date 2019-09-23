@@ -37,6 +37,7 @@ func main() {
 	}
 
 	g := gate.NewGate(9999)
+	g.Static("/", "/Users/qinhan/web-layout/static/example")
 	demo.Registry(g)
 
 	g.Start()
