@@ -12,7 +12,7 @@ var ErrAbsentServiceRegisterConfig = fmt.Errorf("service register config is abse
 
 // Register implements registry Client interface
 func (client *Client) Register() error {
-	if client.srConfig == nil {
+	if client.registryConfig == nil {
 		return ErrAbsentServiceRegisterConfig
 	}
 
@@ -23,11 +23,11 @@ func (client *Client) Register() error {
 	}()
 
 	registration := new(consulAPI.AgentServiceRegistration)
-	registration.ID = client.srConfig.ID
-	registration.Name = client.srConfig.ServerType
-	registration.Tags = client.srConfig.Tags
-	registration.Address = client.srConfig.IP
-	registration.Port = client.srConfig.Port
+	registration.ID = client.registryConfig.ID
+	registration.Name = client.registryConfig.ServerType
+	registration.Tags = client.registryConfig.Tags
+	registration.Address = client.registryConfig.IP
+	registration.Port = client.registryConfig.Port
 	registration.Check = &consulAPI.AgentServiceCheck{
 		HTTP:                           fmt.Sprintf("http://%s:%d%s", registration.Address, client.checkPort, "/check"),
 		Timeout:                        "3s",
@@ -39,12 +39,12 @@ func (client *Client) Register() error {
 }
 
 func (client *Client) DeRegister() error {
-	if client.srConfig == nil {
+	if client.registryConfig == nil {
 		return ErrAbsentServiceRegisterConfig
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	client.checkServer.Shutdown(ctx)
-	return client.consulClient.Agent().ServiceDeregister(client.srConfig.ID)
+	return client.consulClient.Agent().ServiceDeregister(client.registryConfig.ID)
 }
