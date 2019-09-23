@@ -6,75 +6,48 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 )
 
-// 一个 staticFile
-type staticFile struct {
-	urlPrefix string
-	root      string
-	indexes   bool
-}
-
-type gate struct {
-	*group
+// Gate defines gateway
+type Gate struct {
+	srv    *http.Server
 	port   int
 	engine *gin.Engine
-	srv    *http.Server
-	static *staticFile
+	groups map[string]*gin.RouterGroup
 }
 
-func NewGate(p int, m ...gin.HandlerFunc) Gate {
-	g := newGroup("", m...)
-	return &gate{
-		port:  p,
-		group: g,
+// NewGate is the constructor of Gate
+func NewGate(port int, m ...gin.HandlerFunc) *Gate {
+	engine := gin.New()
+	engine.Use(m...)
+	return &Gate{
+		port:   port,
+		engine: engine,
+		groups: make(map[string]*gin.RouterGroup),
 	}
 }
 
-func (g *gate) Start() {
-	// 新建 engine
-	g.engine = gin.New()
-	// 加入 staticFile
-	if g.static != nil {
-		g.engine.Use(static.Serve(g.static.urlPrefix, static.LocalFile(g.static.root, g.static.indexes)))
+// Start start gate server
+func (gate *Gate) Start() {
+	gate.srv = &http.Server{
+		Addr:    fmt.Sprintf(":%d", gate.port),
+		Handler: gate.engine,
 	}
-	// 添加路由
-	g.add2gin(&g.engine.RouterGroup)
 
-	go func(g *gate) {
-		g.srv = &http.Server{
-			Addr:    fmt.Sprintf(":%d", g.port),
-			Handler: g.engine,
-		}
-
-		fmt.Printf("Server Start on port : %d\n", g.port)
-		if err := g.srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			panic("Server Start Error : " + err.Error())
-		}
-	}(g)
+	fmt.Printf("Server Start on port : %d\n", gate.port)
+	if err := gate.srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		panic("Server Start Error : " + err.Error())
+	}
 }
 
-func (g *gate) Stop() {
-	// prevent call stop without start
-	if g.srv != nil {
-		// Wait for interrupt signal to gracefully shutdown the server with
-		// a timeout of 5 seconds.
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
+// Shutdown stop the server with a timeout of 5 seconds
+func (gate *Gate) Shutdown() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-		if err := g.srv.Shutdown(ctx); err != nil {
-			panic("Server Shutdown Error : " + err.Error())
-		}
+	if err := gate.srv.Shutdown(ctx); err != nil {
+		panic("Server Shutdown Error : " + err.Error())
 	}
 	fmt.Println("Server Exit")
-}
-
-func (g *gate) Static(urlPrefix, root string, indexes bool) {
-	g.static = &staticFile{
-		urlPrefix: urlPrefix,
-		root:      root,
-		indexes:   indexes,
-	}
 }

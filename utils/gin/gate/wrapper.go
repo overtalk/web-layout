@@ -10,42 +10,43 @@ import (
 )
 
 var (
-	// errInvalidHandlerType : handler 不是 func
+	// errInvalidHandlerType defines the error that the type of handler is not func
 	errInvalidHandlerType = errors.New("handler should be function type")
-	// errInvalidInputParamsNum : handler 函数入参数数量错误
+	// errInvalidInputParamsNum defines the error that number of input args is invalid
 	errInvalidInputParamsNum = errors.New("handler function require 1 or 2 input parameters")
-	// errInvalidOutputParamsNum : handler 函数返回参数数数量错误
+	// errInvalidOutputParamsNum defines the error that number of output args is invalid
 	errInvalidOutputParamsNum = errors.New("handler function require 1 output parameters")
 )
 
-func Wrap(f interface{}) gin.HandlerFunc {
+// wrap wrap general handler to gin handler
+func wrap(f interface{}) gin.HandlerFunc {
 	t := reflect.TypeOf(f)
 
-	// 检查 handler 的 Type
+	// check the Type of handler
 	if t.Kind() != reflect.Func {
 		panic(errInvalidHandlerType)
 	}
 
-	// 检查 handler 的 input num
+	// check the number of input args
 	numIn := t.NumIn()
 	if numIn < 1 || numIn > 2 {
 		panic(errInvalidInputParamsNum)
 	}
 
-	// 检查 handler 的 output num
+	// check the number of output args
 	numOut := t.NumOut()
 	if numOut != 1 {
 		panic(errInvalidOutputParamsNum)
 	}
 
 	return func(c *gin.Context) {
-		// handler 入参
-		// 第一个参数为 context.Context, 传递上下文
+		// handler input
+		// first arg should be context.Context
 		inValues := []reflect.Value{
 			reflect.ValueOf(c),
 		}
 
-		// 如果需要
+		// if necessary
 		if numIn == 2 {
 			req := newReqInstance(t.In(1))
 			if err := c.Bind(req); err != nil {

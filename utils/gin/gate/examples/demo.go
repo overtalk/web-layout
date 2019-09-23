@@ -11,22 +11,22 @@ import (
 
 func main() {
 	g := NewGate(8080)
-	g.API("/test", "POST", test)
+	g.POST("/test", test)
 
-	group1 := g.Group("/group1")
-	group1.API("/test1", "GET", test1)
-	group1.API("/test2", "GET", test2)
+	g.AddGroup("/group1")
+	g.GET("/test1", test1, "/group1")
+	g.GET("/test2", test2, "/group1")
 
-	group2 := g.Group("/group2")
-	group2.API("/test3", "GET", test3)
-	group2.API("/test4", "GET", test4)
+	g.AddGroup("/group2")
+	g.GET("/test1", test3, "/group2")
+	g.GET("/test2", test4, "/group2")
 
 	g.Start()
 
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
-	g.Stop()
+	g.Shutdown()
 }
 
 func test(ctx context.Context, req *map[string]interface{}) map[string]interface{} {
