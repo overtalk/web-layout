@@ -8,18 +8,18 @@ import (
 	"web-layout/utils/mysql"
 )
 
-type mysqlDB struct {
+type MySQL struct {
 	config mysql.Config
 	conn   *sql.DB
 }
 
-func MySQL(c mysql.Config) (*mysqlDB, error) {
+func NewMySQL(c mysql.Config) (*MySQL, error) {
 	conn, err := c.Connect()
 	if err != nil {
 		return nil, err
 	}
 
-	return &mysqlDB{
+	return &MySQL{
 		config: c,
 		conn:   conn,
 	}, nil

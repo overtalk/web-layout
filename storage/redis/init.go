@@ -6,18 +6,18 @@ import (
 	redisPool "web-layout/utils/redis"
 )
 
-type redisCache struct {
+type Redis struct {
 	config redisPool.Config
 	client redis.Cmdable
 }
 
-func Redis(c redisPool.Config) (*redisCache, error) {
+func NewRedis(c redisPool.Config) (*Redis, error) {
 	client, err := c.Connect()
 	if err != nil {
 		return nil, err
 	}
 
-	return &redisCache{
+	return &Redis{
 		config: c,
 		client: client,
 	}, nil

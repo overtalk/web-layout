@@ -6,20 +6,20 @@ import (
 	m "web-layout/utils/mongo"
 )
 
-// MongoDB mongodb driver
-type MongoDB struct {
+// Mongo mongodb driver
+type Mongo struct {
 	config m.Cfg
 	conn   *mongo.Database
 }
 
-// NewMongoDB constructor of MongoDB
-func NewMongoDB(config m.Cfg) (*MongoDB, error) {
+// NewMongo constructor of Mongo DB
+func NewMongo(config m.Cfg) (*Mongo, error) {
 	db, err := config.Connect()
 	if err != nil {
 		return nil, err
 	}
 
-	return &MongoDB{
+	return &Mongo{
 		config: config,
 		conn:   db,
 	}, nil

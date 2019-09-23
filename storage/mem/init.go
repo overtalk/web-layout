@@ -4,17 +4,17 @@ import (
 	"web-layout/utils/memcache"
 )
 
-type memCache struct {
+type Memory struct {
 	client *concurrentcache.ConcurrentCache
 }
 
-func Mem() (*memCache, error) {
+func NewMemory() (*Memory, error) {
 	client, err := concurrentcache.NewConcurrentCache(256, 10240)
 	if err != nil {
 		return nil, err
 	}
 
-	return &memCache{
+	return &Memory{
 		client: client,
 	}, nil
 }
