@@ -1,0 +1,28 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-demo-deployment
+  labels:
+    app: dep-demo
+  namespace: dep-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dep-demo
+  #  template 就是对于一个pod的定义
+  template:
+    metadata:
+      labels:
+        app: dep-demo
+    spec:
+      containers:
+        - name: dep-demo-server
+          image: registry.cn-shanghai.aliyuncs.com/qinhan-shu/dep-demo:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: gitlab-conf
+      imagePullSecrets:
+        - name: regsecret

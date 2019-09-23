@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dep-demo-service
+  namespace: dep-demo
+  labels:
+    app: dep-demo
+spec:
+  selector:
+    app: dep-demo
+  ports:
+    - protocol: TCP
+      nodePort: 30001
+      port: 12345
+  type: NodePort

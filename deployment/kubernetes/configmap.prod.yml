@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-conf
+  namespace: dep-demo
+data:
+  GITLAB_TOKEN: "token"
+  GITLAB_REF: "ref"
+  GITLAB_PID: "2"
+  GITLAB_URL: "url"
