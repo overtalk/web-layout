@@ -22,7 +22,7 @@ var (
 
 func main() {
 	var v bool
-	flag.BoolVar(&v, "version", false, "show version")
+	flag.BoolVar(&v, "v", false, "show version")
 	flag.Parse()
 
 	if v {
