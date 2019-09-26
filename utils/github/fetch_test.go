@@ -13,7 +13,7 @@ func TestCatcher_Fetch(t *testing.T) {
 	if err := env.Parse(&cfg); err != nil {
 		t.Error(err)
 	}
-	fetcher := NewClient(cfg)
+	fetcher := cfg.NewClient()
 
 	data, err := fetcher.Fetch("docker/docker.md")
 	if err != nil {

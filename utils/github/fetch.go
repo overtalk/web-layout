@@ -8,9 +8,9 @@ import (
 	"github.com/google/go-github/github"
 )
 
-func (c *client) Fetch(path string) ([]byte, error) {
+func (c *Client) Fetch() ([]byte, error) {
 	fmt.Printf("%v", c.git.BaseURL)
-	fileContent, _, _, err := c.git.Repositories.GetContents(context.Background(), c.cfg.Owner, c.cfg.Repo, path, &github.RepositoryContentGetOptions{Ref: c.cfg.Ref})
+	fileContent, _, _, err := c.git.Repositories.GetContents(context.Background(), c.cfg.Owner, c.cfg.Repo, c.cfg.Path, &github.RepositoryContentGetOptions{Ref: c.cfg.Ref})
 	if err != nil {
 		return nil, err
 	}
